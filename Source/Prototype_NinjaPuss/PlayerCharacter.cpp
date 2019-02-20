@@ -121,7 +121,7 @@ void APlayerCharacter::MoveRight(float Value)
 	}
 }
 
-void APlayerCharacter::Dash()
+void APlayerCharacter::Dash(EDirection _direction)
 {
 	/// This is the function when the dash is being called
 }

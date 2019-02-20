@@ -49,7 +49,7 @@ public:
 
 #pragma endregion CameraStats
 
-#pragma region DodgeStats
+#pragma region CombatStats
 
 
 
@@ -58,7 +58,7 @@ public:
 
 
 
-#pragma endregion DodgeStats
+#pragma endregion CombatStats
 
 protected:
 	// Called when the game starts or when spawned
@@ -84,7 +84,7 @@ protected:
 
 	/** Called for character dash/dodge ability */
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Dash();
+	void Dash(EDirection _direction);
 
 public:	
 	// Called every frame
