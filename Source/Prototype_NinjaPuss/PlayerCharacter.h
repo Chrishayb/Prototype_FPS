@@ -30,6 +30,10 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+	/** Spawn loaction for the shuriken */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* ShurikenSpawnPoint;
+
 
 #pragma endregion CameraComponents
 	
@@ -51,12 +55,8 @@ public:
 
 #pragma region CombatStats
 
-
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
 	float DodgeCooldown;
-
-
 
 #pragma endregion CombatStats
 
@@ -81,6 +81,10 @@ protected:
 	 * @param Rate	This is a normalized rate, i.e. 1.0 means 100% of desired turn rate
 	 */
 	void LookUpAtRate(float Rate);
+
+	/** Called for shooting shuriken */
+	UFUNCTION(BlueprintCallable, Category = "Skill")
+	void ShootShuriken();
 
 	/** Called for character dash/dodge ability */
 	UFUNCTION(BlueprintCallable, Category = "Combat")

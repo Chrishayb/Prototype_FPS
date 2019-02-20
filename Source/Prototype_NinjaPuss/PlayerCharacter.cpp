@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -41,6 +42,8 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	ShurikenSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ShurikenSpawnPoint"));
+	ShurikenSpawnPoint->SetupAttachment(GetMesh());
 }
 
 // Called when the game starts or when spawned
@@ -119,6 +122,20 @@ void APlayerCharacter::MoveRight(float Value)
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
 	}
+}
+
+void APlayerCharacter::ShootShuriken()
+{
+	/// This is the function that spawn shuriken
+
+	// Set the parameter for spawning the shuriken
+	FVector shurikenSpawnLocation;
+	FVector shurikenSpawnRotation;
+	FActorSpawnParameters shurikenSpawnInfo;
+
+	
+
+	GetWorld();
 }
 
 void APlayerCharacter::Dash(EDirection _direction)
