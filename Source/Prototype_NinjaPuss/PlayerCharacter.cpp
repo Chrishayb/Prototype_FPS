@@ -124,18 +124,31 @@ void APlayerCharacter::MoveRight(float Value)
 	}
 }
 
+void APlayerCharacter::AimDownSight()
+{
+
+}
+
 void APlayerCharacter::ShootShuriken()
 {
 	/// This is the function that spawn shuriken
 
-	// Set the parameter for spawning the shuriken
-	FVector shurikenSpawnLocation;
-	FVector shurikenSpawnRotation;
-	FActorSpawnParameters shurikenSpawnInfo;
-
+	// Validate the onejct pointer
+	if (ShurikenObject)
+	{
+		// Set the parameter for spawning the shuriken
+		FVector shurikenSpawnLocation;
+		FRotator shurikenSpawnRotation;
+		FActorSpawnParameters shurikenSpawnInfo;
+		shurikenSpawnInfo.Owner = this;
+		shurikenSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	
+		shurikenSpawnLocation = ShurikenSpawnPoint->GetComponentLocation();
+		shurikenSpawnRotation = ShurikenSpawnPoint->GetComponentRotation();
 
-	GetWorld();
+		APawn* SpawnedShuriken;
+		SpawnedShuriken = GetWorld()->SpawnActor<APawn>(ShurikenObject, shurikenSpawnLocation, shurikenSpawnRotation, shurikenSpawnInfo);
+	}
 }
 
 void APlayerCharacter::Dash(EDirection _direction)
