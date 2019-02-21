@@ -30,9 +30,15 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* FollowCameraFocusPoint;
+
 	/** Spawn loaction for the shuriken */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Shuriken", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* ShurikenSpawnPoint;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Shuriken", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* AimDownSightFocusPoint;
 
 #pragma endregion CameraComponents
 	
@@ -52,18 +58,20 @@ public:
 
 #pragma endregion CameraStats
 
-#pragma region CombatStats
+#pragma region Shuriken
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill")
-	bool AimDownSightState;
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Skill_Shuriken")
 	TSubclassOf<class APawn> ShurikenObject;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Combat")
-	float DodgeCooldown;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Shuriken")
+	bool AimDownSightState;
 
-#pragma endregion CombatStats
+	UPROPERTY(EditDefaultsOnly, Category = "Skill_Shuriken")
+	float CameraZoomRatio;
+
+
+
+#pragma endregion Shuriken
 
 protected:
 	// Called when the game starts or when spawned
@@ -88,16 +96,15 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	/** Called for aim down sight for shooting shuriken */
-	UFUNCTION(BlueprintCallable, Category = "Skill")
+	UFUNCTION(BlueprintCallable, Category = "Skill_Shuriken")
 	void AimDownSight();
 
-	/** Called for shooting shuriken */
-	UFUNCTION(BlueprintCallable, Category = "Skill")
-	void ShootShuriken();
+	UFUNCTION(BlueprintCallable, Category = "Skill_Shuriken")
+	void ExitAimDownSight();
 
-	/** Called for character dash/dodge ability */
-	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void Dash(EDirection _direction);
+	/** Called for shooting shuriken */
+	UFUNCTION(BlueprintCallable, Category = "Skill_Shuriken")
+	void ShootShuriken();
 
 public:	
 	// Called every frame

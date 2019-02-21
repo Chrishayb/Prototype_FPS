@@ -32,11 +32,14 @@ APlayerCharacter::APlayerCharacter()
 	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
+	FollowCameraFocusPoint = CreateDefaultSubobject<USceneComponent>(TEXT("FollowCameraFocusPoint"));
+	FollowCameraFocusPoint->SetupAttachment(GetMesh());
+
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
+	
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
@@ -44,6 +47,9 @@ APlayerCharacter::APlayerCharacter()
 
 	ShurikenSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ShurikenSpawnPoint"));
 	ShurikenSpawnPoint->SetupAttachment(GetMesh());
+
+	AimDownSightFocusPoint = CreateDefaultSubobject<USceneComponent>(TEXT("AimDownSightFocusPoint"));
+	AimDownSightFocusPoint->SetupAttachment(GetMesh());
 }
 
 // Called when the game starts or when spawned
@@ -51,6 +57,9 @@ void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// Attach the camera to the focus point
+	CameraBoom->AttachTo(FollowCameraFocusPoint); 
+
 }
 
 // Called every frame
@@ -126,14 +135,32 @@ void APlayerCharacter::MoveRight(float Value)
 
 void APlayerCharacter::AimDownSight()
 {
+	// Change the ADS state to true
+	AimDownSightState = true;
 
+	// Let the character follow camera rotation
+	bUseControllerRotationYaw = true;
+
+	CameraBoom->AttachTo(AimDownSightFocusPoint);
+	CameraBoom->TargetArmLength *= CameraZoomRatio;
+
+}
+
+void APlayerCharacter::ExitAimDownSight()
+{
+	// Change the ADS state to false
+	AimDownSightState = false;
+
+	// Let the character not follow camera rotation
+	bUseControllerRotationYaw = false;
+
+	CameraBoom->AttachTo(FollowCameraFocusPoint);
+	CameraBoom->TargetArmLength /= CameraZoomRatio;
 }
 
 void APlayerCharacter::ShootShuriken()
 {
-	/// This is the function that spawn shuriken
-
-	// Validate the onejct pointer
+	// Validate the obejct pointer
 	if (ShurikenObject)
 	{
 		// Set the parameter for spawning the shuriken
@@ -144,14 +171,9 @@ void APlayerCharacter::ShootShuriken()
 		shurikenSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	
 		shurikenSpawnLocation = ShurikenSpawnPoint->GetComponentLocation();
-		shurikenSpawnRotation = ShurikenSpawnPoint->GetComponentRotation();
+		shurikenSpawnRotation = FollowCamera->GetComponentRotation();
 
 		APawn* SpawnedShuriken;
 		SpawnedShuriken = GetWorld()->SpawnActor<APawn>(ShurikenObject, shurikenSpawnLocation, shurikenSpawnRotation, shurikenSpawnInfo);
 	}
-}
-
-void APlayerCharacter::Dash(EDirection _direction)
-{
-	/// This is the function when the dash is being called
 }
