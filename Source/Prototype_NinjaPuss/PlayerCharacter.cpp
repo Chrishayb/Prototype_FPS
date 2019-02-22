@@ -9,6 +9,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Math/UnrealMathUtility.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -45,8 +46,8 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	ShurikenSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ShurikenSpawnPoint"));
-	ShurikenSpawnPoint->SetupAttachment(GetMesh());
+	KunaiSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ShurikenSpawnPoint"));
+	KunaiSpawnPoint->SetupAttachment(GetMesh());
 
 	AimDownSightFocusPoint = CreateDefaultSubobject<USceneComponent>(TEXT("AimDownSightFocusPoint"));
 	AimDownSightFocusPoint->SetupAttachment(GetMesh());
@@ -58,8 +59,13 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 	// Attach the camera to the focus point
-	CameraBoom->AttachTo(FollowCameraFocusPoint); 
+	CameraBoom->AttachToComponent(FollowCameraFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 
+	// Shuriken current count set to total cout
+	RestoreAllKunais();
+
+	// Default Interaction state
+	bOpenToInteract = false;
 }
 
 // Called every frame
@@ -141,9 +147,8 @@ void APlayerCharacter::AimDownSight()
 	// Let the character follow camera rotation
 	bUseControllerRotationYaw = true;
 
-	CameraBoom->AttachTo(AimDownSightFocusPoint);
+	CameraBoom->AttachToComponent(AimDownSightFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	CameraBoom->TargetArmLength *= CameraZoomRatio;
-
 }
 
 void APlayerCharacter::ExitAimDownSight()
@@ -154,26 +159,63 @@ void APlayerCharacter::ExitAimDownSight()
 	// Let the character not follow camera rotation
 	bUseControllerRotationYaw = false;
 
-	CameraBoom->AttachTo(FollowCameraFocusPoint);
+	CameraBoom->AttachToComponent(FollowCameraFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	CameraBoom->TargetArmLength /= CameraZoomRatio;
 }
 
-void APlayerCharacter::ShootShuriken()
+void APlayerCharacter::ShootKunai()
 {
 	// Validate the obejct pointer
-	if (ShurikenObject)
+	// Check if the player is ADSing
+	// Check if there is enough kunai to shoot
+	if (KunaiObject 
+		&& AimDownSightState == true
+		&& KunaiCurrentCount > 0)
 	{
 		// Set the parameter for spawning the shuriken
-		FVector shurikenSpawnLocation;
-		FRotator shurikenSpawnRotation;
-		FActorSpawnParameters shurikenSpawnInfo;
-		shurikenSpawnInfo.Owner = this;
-		shurikenSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	
-		shurikenSpawnLocation = ShurikenSpawnPoint->GetComponentLocation();
-		shurikenSpawnRotation = FollowCamera->GetComponentRotation();
+		FVector kunaiSpawnLocation;
+		FRotator kunaiSpawnRotation;
+		FActorSpawnParameters kunaiSpawnInfo;
+		kunaiSpawnInfo.Owner = this;
+		kunaiSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		kunaiSpawnLocation = KunaiSpawnPoint->GetComponentLocation();
+		kunaiSpawnRotation = FollowCamera->GetComponentRotation();
 
-		APawn* SpawnedShuriken;
-		SpawnedShuriken = GetWorld()->SpawnActor<APawn>(ShurikenObject, shurikenSpawnLocation, shurikenSpawnRotation, shurikenSpawnInfo);
+		// Spawn the kunai
+		APawn* SpawnedKunai;
+		SpawnedKunai = GetWorld()->SpawnActor<APawn>(KunaiObject, kunaiSpawnLocation, kunaiSpawnRotation, kunaiSpawnInfo);
+
+		// Lower the ammo
+		KunaiCurrentCount--;
 	}
 }
+
+void APlayerCharacter::Interact()
+{
+	if (bOpenToInteract)
+	{
+		bInteracting = true;
+	}
+}
+
+void APlayerCharacter::RestoreAllKunais()
+{
+	KunaiCurrentCount = KunaiTotalCount;
+}
+
+void APlayerCharacter::RestoreKunai(int _count)
+{
+	KunaiCurrentCount = FMath::Max(KunaiTotalCount, KunaiCurrentCount + _count);
+}
+
+void APlayerCharacter::OpenToInteraction()
+{
+	bOpenToInteract = true;
+}
+
+void APlayerCharacter::EndInteraction()
+{
+	bOpenToInteract = false;
+	bInteracting = false;
+}
+
