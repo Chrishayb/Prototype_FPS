@@ -34,10 +34,10 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 	class USceneComponent* FollowCameraFocusPoint;
 
 	/** Spawn loaction for the shuriken */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Shuriken", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* ShurikenSpawnPoint;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* KunaiSpawnPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Shuriken", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* AimDownSightFocusPoint;
 
 #pragma endregion CameraComponents
@@ -58,20 +58,34 @@ public:
 
 #pragma endregion CameraStats
 
-#pragma region Shuriken
+#pragma region Kunai
 
-	UPROPERTY(EditAnywhere, Category = "Skill_Shuriken")
-	TSubclassOf<class APawn> ShurikenObject;
+	UPROPERTY(EditAnywhere, Category = "Skill_Kunai")
+	TSubclassOf<class APawn> KunaiObject;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Shuriken")
+	UPROPERTY(EditDefaultsOnly, Category = "Skill_Kunai")
+	int KunaiTotalCount;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai")
+	int KunaiCurrentCount;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai")
 	bool AimDownSightState;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Skill_Shuriken")
+	UPROPERTY(EditDefaultsOnly, Category = "Skill_Kunai")
 	float CameraZoomRatio;
 
+#pragma endregion Kunai
 
+#pragma region Interaction
 
-#pragma endregion Shuriken
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	bool bOpenToInteract;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	bool bInteracting;
+
+#pragma endregion Interaction
 
 protected:
 	// Called when the game starts or when spawned
@@ -95,16 +109,20 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/** Called for aim down sight for shooting shuriken */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Shuriken")
+	/** Called for aim down sight for shooting kunai */
+	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
 	void AimDownSight();
 
-	UFUNCTION(BlueprintCallable, Category = "Skill_Shuriken")
+	/** Called for exite aim down sight */
+	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
 	void ExitAimDownSight();
 
 	/** Called for shooting shuriken */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Shuriken")
-	void ShootShuriken();
+	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	void ShootKunai();
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void Interact();
 
 public:	
 	// Called every frame
@@ -112,5 +130,26 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	void RestoreAllKunais();
+
+	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	void RestoreKunai(int _count);
+
+	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	int GetKunaiCount() { return KunaiCurrentCount; }
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void OpenToInteraction();
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void EndInteraction();
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	bool GetInterationState() { return bOpenToInteract; }
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	bool IsPlayerInteracting() { return bInteracting; }
 
 };
