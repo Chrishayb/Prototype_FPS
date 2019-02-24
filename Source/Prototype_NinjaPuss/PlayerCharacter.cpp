@@ -126,7 +126,7 @@ void APlayerCharacter::MoveForward(float Value)
 
 void APlayerCharacter::MoveRight(float Value)
 {
-	if ((Controller != NULL) && (Value != 0.0f))
+	if ((Controller != nullptr) && (Value != 0.0f))
 	{
 		// find out which way is right
 		const FRotator Rotation = Controller->GetControlRotation();
