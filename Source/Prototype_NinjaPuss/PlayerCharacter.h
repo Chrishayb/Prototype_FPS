@@ -30,18 +30,18 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* FollowCameraFocusPoint;
+#pragma endregion CameraComponents
 
 	/** Spawn loaction for the shuriken */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* KunaiSpawnPoint;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* FollowCameraFocusPoint;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* AimDownSightFocusPoint;
 
-#pragma endregion CameraComponents
-	
 public:
 	// Sets default values for this character's properties
 	APlayerCharacter();
@@ -87,6 +87,13 @@ public:
 
 #pragma endregion Interaction
 
+#pragma region Birdeye View
+
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Birdeye Mode")
+	
+
+#pragma endregion Birdeye View
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -131,12 +138,15 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	/** Called for set the kunai count to maximum */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
 	void RestoreAllKunais();
 
+	/** Called for restore certain amount of kunai (but not over the max) */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
 	void RestoreKunai(int _count);
 
+	/** Return the current count of kunai player is holding */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
 	int GetKunaiCount() { return KunaiCurrentCount; }
 
@@ -147,9 +157,11 @@ public:
 	void EndInteraction();
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	bool GetInterationState() { return bOpenToInteract; }
+	bool IsOpenToInteract() { return bOpenToInteract; }
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	bool IsPlayerInteracting() { return bInteracting; }
+
+
 
 };
