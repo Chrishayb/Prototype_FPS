@@ -213,7 +213,7 @@ void APlayerCharacter::OpenToInteraction()
 	bOpenToInteract = true;
 }
 
-void APlayerCharacter::EndInteraction()
+void APlayerCharacter::CloseInteraction()
 {
 	bOpenToInteract = false;
 	bInteracting = false;

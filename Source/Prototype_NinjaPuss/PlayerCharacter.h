@@ -154,7 +154,7 @@ public:
 	void OpenToInteraction();
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void EndInteraction();
+	void CloseInteraction();
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	bool IsOpenToInteract() { return bOpenToInteract; }
