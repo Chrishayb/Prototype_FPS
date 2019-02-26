@@ -40,7 +40,7 @@ void AClimbCloth::BeginPlay()
 void AClimbCloth::TriggerBoxBeginOverlap(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(OtherActor);
-	if (playerCharacter)
+	if (playerCharacter && !bHasUsed)
 	{
 		PlayerReference = playerCharacter;
 		PlayerReference->OpenToInteraction();
@@ -50,7 +50,7 @@ void AClimbCloth::TriggerBoxBeginOverlap(class UPrimitiveComponent* HitComp, cla
 void AClimbCloth::TriggerBoxEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	APlayerCharacter* playerCharacter = Cast<APlayerCharacter>(OtherActor);
-	if (playerCharacter)
+	if (playerCharacter && !bHasUsed)
 	{
 		PlayerReference->CloseInteraction();
 	}
@@ -123,22 +123,25 @@ void AClimbCloth::Tick(float DeltaTime)
 	// Run the check for the interaction
 	if (bHasSetPath && bInUse && !bHasUsed)
 	{
+		bool reachedDestination = false;
+
 		// Increament the time the move
 		LerpDelta += DeltaTime;
+		float alpha = LerpDelta / TimeForCurrentPath;
 
-		bool reachedDestination = false;
+		float leakAlpha;
 		float leakTime;
-		if (LerpDelta > 1.0f)
+		if (alpha > 1.0f)
 		{
+			leakAlpha = alpha - 1.0f;
+			leakTime = leakAlpha / TimeForCurrentPath;
+			alpha = 1.0f;
 			reachedDestination = true;
-			leakTime = LerpDelta - 1.0f;
-			LerpDelta = 1.0f;
 		}
 
 		// Move the actor
 		FVector resultLocation;
-		float alpha = LerpDelta / TimeForCurrentPath;
-		resultLocation = FMath::Lerp(CurrentWayPointLoc, DestinationLoc, LerpDelta);
+		resultLocation = FMath::Lerp(CurrentWayPointLoc, DestinationLoc, alpha);
 		PlayerReference->SetActorLocation(resultLocation);
 
 		// Check if the player has reach the current destination
@@ -160,11 +163,6 @@ void AClimbCloth::Tick(float DeltaTime)
 			}
 
 		}
-
 	}
-	
-
-	
-
 }
 
