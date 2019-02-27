@@ -17,18 +17,12 @@ AInteractActor::AInteractActor()
 
 void AInteractActor::OnTriggerEnter(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (PlayerReference && Cast<APlayerCharacter>(OtherActor) == PlayerReference && bUseable)
-	{
-		PlayerReference->SetInteractionTarget(this);
-	}
+	OnTriggerEnterCheck(OtherActor);
 }
 
 void AInteractActor::OnTriggerExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (PlayerReference && Cast<APlayerCharacter>(OtherActor) == PlayerReference)
-	{
-		PlayerReference->RemoveInteractionTarget(this);
-	}
+	OnTriggerrExitCheck(OtherActor);
 }
 
 // Called when the game starts or when spawned
@@ -38,6 +32,22 @@ void AInteractActor::BeginPlay()
 	
 	// Try to find the player reference
 	PlayerReference = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+}
+
+void AInteractActor::OnTriggerEnterCheck(class AActor* _otherActor)
+{
+	if (PlayerReference && Cast<APlayerCharacter>(_otherActor) == PlayerReference && bUseable)
+	{
+		PlayerReference->SetInteractionTarget(this);
+	}
+}
+
+void AInteractActor::OnTriggerrExitCheck(class AActor* _otherActor)
+{
+	if (PlayerReference && Cast<APlayerCharacter>(_otherActor) == PlayerReference)
+	{
+		PlayerReference->RemoveInteractionTarget(this);
+	}
 }
 
 // Called every frame

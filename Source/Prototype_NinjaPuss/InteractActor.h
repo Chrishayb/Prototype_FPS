@@ -31,12 +31,18 @@ public:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Called as the player triggers and able to use the interaction ability(s)
+	// Called by OnTriggerEnter()
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void OnTriggerEnterCheck(class AActor* _otherActor);
+	
+	// Called by OnTriggerExit()
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void OnTriggerrExitCheck(class AActor* _otherActor);
+
+	// Called as the player triggers and able to use the interaction ability(s)
 	void OnTriggerEnter(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	// Called as the player leave the trigger and no longer able to use the interaction ability(s)
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void OnTriggerExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:	
