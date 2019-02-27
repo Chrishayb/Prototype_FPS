@@ -11,6 +11,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Math/UnrealMathUtility.h"
 
+#include "InteractActor.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -190,8 +192,13 @@ void APlayerCharacter::ShootKunai()
 	}
 }
 
-void APlayerCharacter::Interact()
+void APlayerCharacter::InteractAction()
 {
+	if (InteractTarget)
+	{
+		//InteractTarget->OnInteractionStart();
+	}
+
 	if (bOpenToInteract)
 	{
 		bInteracting = true;
@@ -206,6 +213,19 @@ void APlayerCharacter::RestoreAllKunais()
 void APlayerCharacter::RestoreKunai(int _count)
 {
 	KunaiCurrentCount = FMath::Max(KunaiTotalCount, KunaiCurrentCount + _count);
+}
+
+void APlayerCharacter::SetInteractionTarget(class AInteractActor* _interactTarget)
+{
+	InteractTarget = _interactTarget;
+}
+
+void APlayerCharacter::RemoveInteractionTarget(class AInteractActor* _interactTarget)
+{
+	if (_interactTarget == InteractTarget)
+	{
+		InteractTarget = nullptr;
+	}
 }
 
 void APlayerCharacter::OpenToInteraction()

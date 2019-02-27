@@ -27,6 +27,7 @@ AClimbCloth::AClimbCloth()
 	// Set the default state
 	bHasUsed = false;
 	bInUse = false;
+	bInteractionOpened = false;
 	bCanUse = true;
 }
 
@@ -44,6 +45,7 @@ void AClimbCloth::TriggerBoxBeginOverlap(class UPrimitiveComponent* HitComp, cla
 	{
 		PlayerReference = playerCharacter;
 		PlayerReference->OpenToInteraction();
+		bInteractionOpened = true;
 	}
 }
 
@@ -84,6 +86,7 @@ void AClimbCloth::OnEndInteraction()
 
 	bHasUsed = true;
 	bInUse = false;
+	bInteractionOpened = false;
 	bCanUse = false;
 }
 
@@ -112,7 +115,7 @@ void AClimbCloth::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!bInUse && PlayerReference)
+	if (bInteractionOpened && !bInUse && PlayerReference)
 	{
 		if (PlayerReference->IsPlayerInteracting())
 		{
