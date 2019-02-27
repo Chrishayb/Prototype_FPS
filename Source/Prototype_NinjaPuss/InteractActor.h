@@ -20,6 +20,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	class APlayerCharacter* PlayerReference;
 
+	// Store the info if this interaction actor is useable by the player
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	bool bUseable;
+
 public:	
 	// Sets default values for this actor's properties
 	AInteractActor();
@@ -29,25 +33,29 @@ public:
 
 	// Called as the player triggers and able to use the interaction ability(s)
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void OnTriggerEnter();
+	void OnTriggerEnter(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	// Called as the player leave the trigger and no longer able to use the interaction ability(s)
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void OnTriggerExit();
+	void OnTriggerExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called as the player is interacting with this actor
-	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnInteractStart"))
-	void OnInteractionStart();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction", meta = (DisplayName = "OnInteractStart"))
+	void ReciveInteractionStart();
 
-	virtual void InteractionStart();
+	// Called as the player is interacting with this actor (C++)
+	virtual void OnInteractionStart();
 
 	// Called as the player is interacting with this actor
-	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnInteractEnd"))
-	void OnInteractionEnd();
+	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction", meta = (DisplayName = "OnInteractEnd"))
+	void ReciveInteractionEnd();
+
+	// Called as the player is interacting with this actor (C++)
+	virtual void OnInteractionEnd();
 
 	UFUNCTION(BlueprintCallable)
 	class APlayerCharacter* GetPlayerRef() { return PlayerReference; }

@@ -11,19 +11,21 @@ AInteractActor::AInteractActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Set this interaction actor to able to interact by player at the beginnig
+	bUseable = true;
 }
 
-void AInteractActor::OnTriggerEnter()
+void AInteractActor::OnTriggerEnter(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	if (PlayerReference)
+	if (PlayerReference && Cast<APlayerCharacter>(OtherActor) == PlayerReference && bUseable)
 	{
 		PlayerReference->SetInteractionTarget(this);
 	}
 }
 
-void AInteractActor::OnTriggerExit()
+void AInteractActor::OnTriggerExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (PlayerReference)
+	if (PlayerReference && Cast<APlayerCharacter>(OtherActor) == PlayerReference)
 	{
 		PlayerReference->RemoveInteractionTarget(this);
 	}
@@ -34,8 +36,8 @@ void AInteractActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	// Try to find the player reference
 	PlayerReference = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
-
 }
 
 // Called every frame
@@ -43,5 +45,20 @@ void AInteractActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// If the player ref is not valid, try again
+	if (!PlayerReference)
+	{
+		PlayerReference = Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0));
+	}
+}
+
+void AInteractActor::OnInteractionStart()
+{
+	ReciveInteractionStart();
+}
+
+void AInteractActor::OnInteractionEnd()
+{
+	ReciveInteractionEnd();
 }
 
