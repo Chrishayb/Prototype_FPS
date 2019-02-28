@@ -2,6 +2,7 @@
 
 #include "InteractActor.h"
 #include "Components/BoxComponent.h"
+#include "Components/SceneComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "PlayerCharacter.h"
@@ -11,6 +12,9 @@ AInteractActor::AInteractActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	DefaultRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultRoot"));
+	RootComponent = DefaultRoot;
 
 	// The core component of the interaction system
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
@@ -82,6 +86,16 @@ void AInteractActor::OnInteractionStart()
 void AInteractActor::OnInteractionEnd()
 {
 	ReciveInteractionEnd();
+}
+
+void AInteractActor::BeginInteraction()
+{
+	OnInteractionStart();
+}
+
+void AInteractActor::EndInteraction()
+{
+	OnInteractionEnd();
 }
 
 void AInteractActor::DisableInteractActor()

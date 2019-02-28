@@ -2,6 +2,7 @@
 
 #include "TomatoBox.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "PlayerCharacter.h"
 
@@ -12,10 +13,7 @@ ATomatoBox::ATomatoBox()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetGenerateOverlapEvents(false);
-	RootComponent = Mesh;
-
-
-
+	Mesh->SetupAttachment(RootComponent);
 }
 
 void ATomatoBox::BeginPlay()
@@ -34,16 +32,25 @@ void ATomatoBox::OnInteractionStart()
 {
 	Super::OnInteractionStart();
 
+	// Safty check if the player reference is valid or not
+	if (!PlayerReference)
+	{
+		PlayerReference = 
+			Cast<APlayerCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	}
 
+	// Give player 1 Tomato to his hand
+	PlayerReference->RestoreKunai(1);
+
+	// End the interaction
+	OnInteractionEnd();
 }
 
 void ATomatoBox::OnInteractionEnd()
 {
 	Super::OnInteractionEnd();
 
-
 	// Not able to use after
 	DisableInteractActor();
-
 
 }

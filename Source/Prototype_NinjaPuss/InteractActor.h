@@ -18,6 +18,9 @@ class PROTOTYPE_NINJAPUSS_API AInteractActor : public AActor
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class USceneComponent* DefaultRoot;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UBoxComponent* TriggerBox;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
@@ -59,17 +62,25 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction", meta = (DisplayName = "OnInteractStart"))
 	void ReciveInteractionStart();
 
-	// Called as the player is interacting with this actor (C++)
-	virtual void OnInteractionStart();
-
 	// Called as the player is interacting with this actor
 	UFUNCTION(BlueprintImplementableEvent, Category = "Interaction", meta = (DisplayName = "OnInteractEnd"))
 	void ReciveInteractionEnd();
 
 	// Called as the player is interacting with this actor (C++)
+	virtual void OnInteractionStart();
+
+	// Called as the player is interacting with this actor (C++)
 	virtual void OnInteractionEnd();
 
-	UFUNCTION(BlueprintCallable)
+	// Called when the actor interaction should begin
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void BeginInteraction();
+
+	// Called when the actor interaction should end
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void EndInteraction();
+
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void DisableInteractActor();
 
 	UFUNCTION(BlueprintCallable)

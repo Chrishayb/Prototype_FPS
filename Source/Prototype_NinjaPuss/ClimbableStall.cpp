@@ -15,7 +15,7 @@ AClimbableStall::AClimbableStall()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetGenerateOverlapEvents(false);
-	RootComponent = Mesh;
+	Mesh->SetupAttachment(RootComponent);
 
 	// Set the default state
 	WayPointCount = 0;

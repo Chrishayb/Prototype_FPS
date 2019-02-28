@@ -63,9 +63,6 @@ void APlayerCharacter::BeginPlay()
 	// Attach the camera to the focus point
 	CameraBoom->AttachToComponent(FollowCameraFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 
-	// Shuriken current count set to total cout
-	RestoreAllKunais();
-
 	// Default Interaction state
 	bOpenToInteract = false;
 }
@@ -97,6 +94,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
+
+	// Player other action (Interactions)
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::InteractAction);
 
 }
 
@@ -212,7 +212,7 @@ void APlayerCharacter::RestoreAllKunais()
 
 void APlayerCharacter::RestoreKunai(int _count)
 {
-	KunaiCurrentCount = FMath::Max(KunaiTotalCount, KunaiCurrentCount + _count);
+	KunaiCurrentCount = FMath::Min(KunaiTotalCount, KunaiCurrentCount + _count);
 }
 
 void APlayerCharacter::SetInteractionTarget(class AInteractActor* _interactTarget)
