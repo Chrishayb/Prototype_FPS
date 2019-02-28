@@ -17,6 +17,9 @@ class PROTOTYPE_NINJAPUSS_API AInteractActor : public AActor
 	
 public:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	class UBoxComponent* TriggerBox;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	class APlayerCharacter* PlayerReference;
 
@@ -39,10 +42,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void OnTriggerrExitCheck(class AActor* _otherActor);
 
-	// Called as the player triggers and able to use the interaction ability(s)
-	void OnTriggerEnter(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+protected:
 
+	// Called as the player triggers and able to use the interaction ability(s)
+	UFUNCTION()
+	void OnTriggerEnter(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	// Called as the player leave the trigger and no longer able to use the interaction ability(s)
+	UFUNCTION()
 	void OnTriggerExit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:	
@@ -62,6 +68,9 @@ public:
 
 	// Called as the player is interacting with this actor (C++)
 	virtual void OnInteractionEnd();
+
+	UFUNCTION(BlueprintCallable)
+	void DisableInteractActor();
 
 	UFUNCTION(BlueprintCallable)
 	class APlayerCharacter* GetPlayerRef() { return PlayerReference; }

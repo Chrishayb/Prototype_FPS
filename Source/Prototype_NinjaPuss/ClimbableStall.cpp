@@ -17,13 +17,6 @@ AClimbableStall::AClimbableStall()
 	Mesh->SetGenerateOverlapEvents(false);
 	RootComponent = Mesh;
 
-	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
-	TriggerBox->SetGenerateOverlapEvents(true);
-	TriggerBox->OnComponentBeginOverlap.AddDynamic(this, &AClimbableStall::OnTriggerEnter);
-	TriggerBox->OnComponentEndOverlap.AddDynamic(this, &AClimbableStall::OnTriggerExit);
-	TriggerBox->SetCollisionProfileName(TEXT("Trigger"));
-	TriggerBox->SetupAttachment(RootComponent);
-
 	// Set the default state
 	WayPointCount = 0;
 	bHasUsed = false;
@@ -100,7 +93,6 @@ void AClimbableStall::Tick(float DeltaTime)
 				CurrentPathLength = FVector::Distance(CurrentWayPointLoc, DestinationLoc);
 				TimeForCurrentPath = (CurrentPathLength / TotalDistanceTravel) * TotalTransferTime;
 			}
-
 		}
 	}
 }
@@ -137,4 +129,7 @@ void AClimbableStall::OnInteractionEnd()
 	bUseable = false;
 	bHasUsed = true;
 	bInUse = false;
+
+	// Disable the tick function for this actor
+	DisableInteractActor();
 }

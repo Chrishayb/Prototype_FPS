@@ -196,7 +196,7 @@ void APlayerCharacter::InteractAction()
 {
 	if (InteractTarget)
 	{
-		//InteractTarget->OnInteractionStart();
+		InteractTarget->OnInteractionStart();
 	}
 
 	if (bOpenToInteract)

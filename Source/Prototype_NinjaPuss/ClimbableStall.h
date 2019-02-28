@@ -7,7 +7,7 @@
 #include "ClimbableStall.generated.h"
 
 /**
- * 
+ * This is an interactabe object that allow player precisionly climb up to the top of the stall
  */
 UCLASS()
 class PROTOTYPE_NINJAPUSS_API AClimbableStall : public AInteractActor
@@ -18,9 +18,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	class UBoxComponent* TriggerBox;
 
 	UPROPERTY(Category = "Interaction", VisibleAnywhere, BlueprintReadOnly)
 	TArray<class USceneComponent*> WayPointArray;
@@ -84,6 +81,5 @@ public:
 
 	// Called as the player is interacting with this actor (C++)
 	virtual void OnInteractionEnd() override;
-
 
 };
