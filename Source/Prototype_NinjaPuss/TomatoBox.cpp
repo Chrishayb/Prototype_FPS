@@ -43,7 +43,7 @@ void ATomatoBox::OnInteractionStart()
 	PlayerReference->RestoreKunai(1);
 
 	// End the interaction
-	OnInteractionEnd();
+	//OnInteractionEnd();
 }
 
 void ATomatoBox::OnInteractionEnd()
@@ -51,6 +51,6 @@ void ATomatoBox::OnInteractionEnd()
 	Super::OnInteractionEnd();
 
 	// Not able to use after
-	DisableInteractActor();
+	//DisableInteractActor();
 
 }
