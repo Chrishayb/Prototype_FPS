@@ -11,6 +11,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Math/UnrealMathUtility.h"
 
+#include "InteractActor.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -61,9 +63,6 @@ void APlayerCharacter::BeginPlay()
 	// Attach the camera to the focus point
 	CameraBoom->AttachToComponent(FollowCameraFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 
-	// Shuriken current count set to total cout
-	RestoreAllKunais();
-
 	// Default Interaction state
 	bOpenToInteract = false;
 }
@@ -95,6 +94,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
+
+	// Player other action (Interactions)
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::InteractAction);
 
 }
 
@@ -190,8 +192,13 @@ void APlayerCharacter::ShootKunai()
 	}
 }
 
-void APlayerCharacter::Interact()
+void APlayerCharacter::InteractAction()
 {
+	if (InteractTarget)
+	{
+		InteractTarget->OnInteractionStart();
+	}
+
 	if (bOpenToInteract)
 	{
 		bInteracting = true;
@@ -205,7 +212,20 @@ void APlayerCharacter::RestoreAllKunais()
 
 void APlayerCharacter::RestoreKunai(int _count)
 {
-	KunaiCurrentCount = FMath::Max(KunaiTotalCount, KunaiCurrentCount + _count);
+	KunaiCurrentCount = FMath::Min(KunaiTotalCount, KunaiCurrentCount + _count);
+}
+
+void APlayerCharacter::SetInteractionTarget(class AInteractActor* _interactTarget)
+{
+	InteractTarget = _interactTarget;
+}
+
+void APlayerCharacter::RemoveInteractionTarget(class AInteractActor* _interactTarget)
+{
+	if (_interactTarget == InteractTarget)
+	{
+		InteractTarget = nullptr;
+	}
 }
 
 void APlayerCharacter::OpenToInteraction()
@@ -213,7 +233,7 @@ void APlayerCharacter::OpenToInteraction()
 	bOpenToInteract = true;
 }
 
-void APlayerCharacter::EndInteraction()
+void APlayerCharacter::CloseInteraction()
 {
 	bOpenToInteract = false;
 	bInteracting = false;

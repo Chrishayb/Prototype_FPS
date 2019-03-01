@@ -80,6 +80,9 @@ public:
 #pragma region Interaction
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	class AInteractActor* InteractTarget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	bool bOpenToInteract;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
@@ -129,7 +132,7 @@ protected:
 	void ShootKunai();
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void Interact();
+	void InteractAction();
 
 public:	
 	// Called every frame
@@ -150,11 +153,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
 	int GetKunaiCount() { return KunaiCurrentCount; }
 
+	/** Set the target to interact for the player */
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void SetInteractionTarget(class AInteractActor* _interactTarget);
+
+	/** Try to remove the interaction target if it exists */
+	UFUNCTION(BlueprintCallable, Category = "Interaction")
+	void RemoveInteractionTarget(class AInteractActor* _interactTarget);
+
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void OpenToInteraction();
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void EndInteraction();
+	void CloseInteraction();
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	bool IsOpenToInteract() { return bOpenToInteract; }
