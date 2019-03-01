@@ -20,6 +20,9 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* TomatoInHandMesh;
+	
 #pragma region CameraComponents
 
 	/** Camera boom positioning the camera behind the character */
@@ -33,13 +36,13 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 #pragma endregion CameraComponents
 
 	/** Spawn loaction for the shuriken */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai", meta = (AllowPrivateAccess = "true"))
-	class USceneComponent* KunaiSpawnPoint;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* TomatoSpawnPoint;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* FollowCameraFocusPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* AimDownSightFocusPoint;
 
 public:
@@ -58,24 +61,24 @@ public:
 
 #pragma endregion CameraStats
 
-#pragma region Kunai
+#pragma region Tomato
 
-	UPROPERTY(EditAnywhere, Category = "Skill_Kunai")
+	UPROPERTY(EditAnywhere, Category = "Skill_Tomato")
 	TSubclassOf<class APawn> KunaiObject;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Skill_Kunai")
+	UPROPERTY(EditDefaultsOnly, Category = "Skill_Tomato")
 	int KunaiTotalCount;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato")
 	int KunaiCurrentCount;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Kunai")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato")
 	bool AimDownSightState;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Skill_Kunai")
+	UPROPERTY(EditDefaultsOnly, Category = "Skill_Tomato")
 	float CameraZoomRatio;
 
-#pragma endregion Kunai
+#pragma endregion Tomato
 
 #pragma region Interaction
 
@@ -89,13 +92,6 @@ public:
 	bool bInteracting;
 
 #pragma endregion Interaction
-
-#pragma region Birdeye View
-
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Birdeye Mode")
-	
-
-#pragma endregion Birdeye View
 
 protected:
 	// Called when the game starts or when spawned
@@ -120,15 +116,15 @@ protected:
 	void LookUpAtRate(float Rate);
 
 	/** Called for aim down sight for shooting kunai */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	void AimDownSight();
 
 	/** Called for exite aim down sight */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	void ExitAimDownSight();
 
 	/** Called for shooting shuriken */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	void ShootKunai();
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
@@ -142,15 +138,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	/** Called for set the kunai count to maximum */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	void RestoreAllKunais();
 
 	/** Called for restore certain amount of kunai (but not over the max) */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	void RestoreKunai(int _count);
 
 	/** Return the current count of kunai player is holding */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Kunai")
+	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	int GetKunaiCount() { return KunaiCurrentCount; }
 
 	/** Set the target to interact for the player */

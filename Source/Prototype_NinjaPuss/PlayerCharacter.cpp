@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -18,6 +18,10 @@ APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
+
+	// Set the tomato that will show inside players hand
+	TomatoInHandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoInHandMesh"));
+	TomatoInHandMesh->SetupAttachment(GetMesh(), TEXT("TomatoSocket"));
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
@@ -48,8 +52,8 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	KunaiSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ShurikenSpawnPoint"));
-	KunaiSpawnPoint->SetupAttachment(GetMesh());
+	TomatoSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("TomatoSpawnPoint"));
+	TomatoSpawnPoint->SetupAttachment(GetMesh());
 
 	AimDownSightFocusPoint = CreateDefaultSubobject<USceneComponent>(TEXT("AimDownSightFocusPoint"));
 	AimDownSightFocusPoint->SetupAttachment(GetMesh());
@@ -180,7 +184,7 @@ void APlayerCharacter::ShootKunai()
 		FActorSpawnParameters kunaiSpawnInfo;
 		kunaiSpawnInfo.Owner = this;
 		kunaiSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		kunaiSpawnLocation = KunaiSpawnPoint->GetComponentLocation();
+		kunaiSpawnLocation = TomatoSpawnPoint->GetComponentLocation();
 		kunaiSpawnRotation = FollowCamera->GetComponentRotation();
 
 		// Spawn the kunai
