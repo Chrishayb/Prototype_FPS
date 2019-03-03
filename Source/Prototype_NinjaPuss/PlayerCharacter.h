@@ -115,6 +115,12 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+	/** Called for character crouching input */
+	void StartCrouch();
+
+	/** Called for character crouching input */
+	void EndCrouch();
+
 	/** Check if player has tomato in his hand */
 	void CheckTomatoInHand();
 
