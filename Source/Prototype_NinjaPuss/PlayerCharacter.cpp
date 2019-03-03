@@ -2,6 +2,7 @@
 
 #include "PlayerCharacter.h"
 #include "Camera/CameraComponent.h"
+#include "Camera/CameraActor.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -10,6 +11,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Math/UnrealMathUtility.h"
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
 
 #include "InteractActor.h"
 
@@ -52,6 +55,9 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+// 	// Create a stationary camera that sits high above the player
+// 	BirdEyeCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("BirdCamera"));
+
 	TomatoSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("TomatoSpawnPoint"));
 	TomatoSpawnPoint->SetupAttachment(GetMesh());
 
@@ -66,6 +72,9 @@ void APlayerCharacter::BeginPlay()
 	
 	// Attach the camera to the focus point
 	CameraBoom->AttachToComponent(FollowCameraFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
+
+	// Make sure the bird eye camera is not being use at the beignning
+	bIsBirdEyeCamera = false;
 
 	// Default Interaction state
 	bOpenToInteract = false;
@@ -104,9 +113,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerCharacter::LookUpAtRate);
 
-	// Player other action (Interactions)
+	// Player other action (Interactions and Functionalities)
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::InteractAction);
-
+	PlayerInputComponent->BindAction("BirdViewToggle", IE_Pressed, this, &APlayerCharacter::CameraToggle);
 }
 
 void APlayerCharacter::TurnAtRate(float Rate)
@@ -169,6 +178,41 @@ void APlayerCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void APlayerCharacter::CameraToggle()
+{
+	// Do the flip flop
+	bIsBirdEyeCamera = !bIsBirdEyeCamera;
+	if (bIsBirdEyeCamera)
+	{
+		// Disable the movement
+		GetCharacterMovement()->SetMovementMode(MOVE_None);
+
+		APlayerController* playerController = UGameplayStatics::GetPlayerController(this, 0);
+		if (playerController)
+		{
+			AActor* birdViewCameraAcrtor;
+			TArray<AActor*> resultActorArray;
+			UGameplayStatics::GetAllActorsOfClass(this, BirdViewCameraClass, resultActorArray);
+			if (resultActorArray.Num() != 0)
+			{
+				birdViewCameraAcrtor = resultActorArray[0];
+				playerController->SetViewTargetWithBlend(birdViewCameraAcrtor, 1.0f);
+			}
+		}
+	}
+	else
+	{
+		// Re-enable the movement
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+		APlayerController* playerController = UGameplayStatics::GetPlayerController(this, 0);
+		if (playerController)
+		{
+			playerController->SetViewTargetWithBlend(this, 1.0f);
+		}
 	}
 }
 
