@@ -33,6 +33,10 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
 
+// 	/** Stationary camera on top of the player */
+// 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+// 	class UCameraComponent* BirdEyeCamera;
+
 #pragma endregion CameraComponents
 
 	/** Spawn loaction for the shuriken */
@@ -50,6 +54,9 @@ public:
 	APlayerCharacter();
 
 #pragma region CameraStats
+	
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	TSubclassOf<class ACameraActor> BirdViewCameraClass;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -58,6 +65,9 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	float BaseLookUpRate;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	bool bIsBirdEyeCamera;
 
 #pragma endregion CameraStats
 
@@ -102,6 +112,9 @@ protected:
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	/** Toggle the camera */
+	void CameraToggle();
 
 	/**
 	 * Called via input to turn at a given rate.
