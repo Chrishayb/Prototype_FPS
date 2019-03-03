@@ -64,13 +64,13 @@ public:
 #pragma region Tomato
 
 	UPROPERTY(EditAnywhere, Category = "Skill_Tomato")
-	TSubclassOf<class APawn> KunaiObject;
+	TSubclassOf<class APawn> TomatoObject;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Skill_Tomato")
-	int KunaiTotalCount;
+	int TomatoTotalCount;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato")
-	int KunaiCurrentCount;
+	int TomatoCurrentCount;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato")
 	bool AimDownSightState;
@@ -115,7 +115,10 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
-	/** Called for aim down sight for shooting kunai */
+	/** Check if player has tomato in his hand */
+	void CheckTomatoInHand();
+
+	/** Called for aim down sight for shooting tomato */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	void AimDownSight();
 
@@ -125,7 +128,7 @@ protected:
 
 	/** Called for shooting shuriken */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
-	void ShootKunai();
+	void ShootTomato();
 
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void InteractAction();
@@ -139,15 +142,15 @@ public:
 
 	/** Called for set the kunai count to maximum */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
-	void RestoreAllKunais();
+	void RestoreAllTomatos();
 
 	/** Called for restore certain amount of kunai (but not over the max) */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
-	void RestoreKunai(int _count);
+	void RestoreTomato(int _count);
 
 	/** Return the current count of kunai player is holding */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
-	int GetKunaiCount() { return KunaiCurrentCount; }
+	int GetKunaiCount() { return TomatoCurrentCount; }
 
 	/** Set the target to interact for the player */
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
