@@ -40,7 +40,7 @@ void ATomatoBox::OnInteractionStart()
 	}
 
 	// Give player 1 Tomato to his hand
-	PlayerReference->RestoreKunai(1);
+	PlayerReference->RestoreTomato(1);
 
 	// End the interaction
 	//OnInteractionEnd();

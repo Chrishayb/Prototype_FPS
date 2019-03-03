@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerCharacter.h"
-#include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -18,6 +18,10 @@ APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
+
+	// Set the tomato that will show inside players hand
+	TomatoInHandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TomatoInHandMesh"));
+	TomatoInHandMesh->SetupAttachment(GetMesh(), TEXT("TomatoSocket"));
 
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
@@ -48,8 +52,8 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	KunaiSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("ShurikenSpawnPoint"));
-	KunaiSpawnPoint->SetupAttachment(GetMesh());
+	TomatoSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("TomatoSpawnPoint"));
+	TomatoSpawnPoint->SetupAttachment(GetMesh());
 
 	AimDownSightFocusPoint = CreateDefaultSubobject<USceneComponent>(TEXT("AimDownSightFocusPoint"));
 	AimDownSightFocusPoint->SetupAttachment(GetMesh());
@@ -65,6 +69,8 @@ void APlayerCharacter::BeginPlay()
 
 	// Default Interaction state
 	bOpenToInteract = false;
+
+	CheckTomatoInHand();
 }
 
 // Called every frame
@@ -86,6 +92,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerCharacter::MoveRight);
+
+	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &APlayerCharacter::StartCrouch);
+	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &APlayerCharacter::EndCrouch);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
@@ -110,6 +119,28 @@ void APlayerCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+void APlayerCharacter::StartCrouch()
+{
+	Crouch();
+}
+
+void APlayerCharacter::EndCrouch()
+{
+	UnCrouch();
+}
+
+void APlayerCharacter::CheckTomatoInHand()
+{
+	if (TomatoCurrentCount > 0)
+	{
+		TomatoInHandMesh->SetVisibility(true);
+	}
+	else
+	{
+		TomatoInHandMesh->SetVisibility(false);
+	}
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -165,30 +196,33 @@ void APlayerCharacter::ExitAimDownSight()
 	CameraBoom->TargetArmLength /= CameraZoomRatio;
 }
 
-void APlayerCharacter::ShootKunai()
+void APlayerCharacter::ShootTomato()
 {
 	// Validate the obejct pointer
 	// Check if the player is ADSing
-	// Check if there is enough kunai to shoot
-	if (KunaiObject 
+	// Check if there is enough tomato to shoot
+	if (TomatoObject 
 		&& AimDownSightState == true
-		&& KunaiCurrentCount > 0)
+		&& TomatoCurrentCount > 0)
 	{
 		// Set the parameter for spawning the shuriken
-		FVector kunaiSpawnLocation;
-		FRotator kunaiSpawnRotation;
-		FActorSpawnParameters kunaiSpawnInfo;
-		kunaiSpawnInfo.Owner = this;
-		kunaiSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		kunaiSpawnLocation = KunaiSpawnPoint->GetComponentLocation();
-		kunaiSpawnRotation = FollowCamera->GetComponentRotation();
+		FVector tomatoSpawnLocation;
+		FRotator tomatoSpawnRotation;
+		FActorSpawnParameters tomatoSpawnInfo;
+		tomatoSpawnInfo.Owner = this;
+		tomatoSpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+		tomatoSpawnLocation = TomatoSpawnPoint->GetComponentLocation();
+		tomatoSpawnRotation = FollowCamera->GetComponentRotation();
 
-		// Spawn the kunai
-		APawn* SpawnedKunai;
-		SpawnedKunai = GetWorld()->SpawnActor<APawn>(KunaiObject, kunaiSpawnLocation, kunaiSpawnRotation, kunaiSpawnInfo);
+		// Spawn the tomato
+		APawn* SpawnedTomato;
+		SpawnedTomato = GetWorld()->SpawnActor<APawn>(TomatoObject, tomatoSpawnLocation, tomatoSpawnRotation, tomatoSpawnInfo);
 
 		// Lower the ammo
-		KunaiCurrentCount--;
+		TomatoCurrentCount--;
+
+		// Check if theres tomato left in the hand
+		CheckTomatoInHand();
 	}
 }
 
@@ -205,14 +239,16 @@ void APlayerCharacter::InteractAction()
 	}
 }
 
-void APlayerCharacter::RestoreAllKunais()
+void APlayerCharacter::RestoreAllTomatos()
 {
-	KunaiCurrentCount = KunaiTotalCount;
+	TomatoCurrentCount = TomatoTotalCount;
+	CheckTomatoInHand();
 }
 
-void APlayerCharacter::RestoreKunai(int _count)
+void APlayerCharacter::RestoreTomato(int _count)
 {
-	KunaiCurrentCount = FMath::Min(KunaiTotalCount, KunaiCurrentCount + _count);
+	TomatoCurrentCount = FMath::Min(TomatoTotalCount, TomatoCurrentCount + _count);
+	CheckTomatoInHand();
 }
 
 void APlayerCharacter::SetInteractionTarget(class AInteractActor* _interactTarget)
