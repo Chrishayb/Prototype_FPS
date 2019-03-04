@@ -17,6 +17,8 @@
 
 #include "InteractActor.h"
 
+#include "Engine.h"
+
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -70,7 +72,6 @@ APlayerCharacter::APlayerCharacter()
 
 	FishToCarry = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FishToCarry"));
 	FishToCarry->SetupAttachment(FishCable);
-	//FishToCarry->AttachToComponent(FishCable, FAttachmentTransformRules::KeepRelativeTransform, )
 }
 
 // Called when the game starts or when spawned
@@ -88,6 +89,15 @@ void APlayerCharacter::BeginPlay()
 	bOpenToInteract = false;
 
 	CheckTomatoInHand();
+
+	TArray<FName> fishCableSocket = FishCable->GetAllSocketNames();
+	if (GEngine)
+	{
+		for (FName name : fishCableSocket)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, name.ToString());
+		}
+	}
 }
 
 // Called every frame
@@ -191,6 +201,9 @@ void APlayerCharacter::MoveRight(float Value)
 
 void APlayerCharacter::CameraToggle()
 {
+	// Blueprint implement event
+	ReceiveCameraToggle();
+
 	// Do the flip flop
 	bIsBirdEyeCamera = !bIsBirdEyeCamera;
 	if (bIsBirdEyeCamera)
