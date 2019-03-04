@@ -20,9 +20,15 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable_GoalFish", meta = (AllowPrivateAccess = "true"))
+	class UCableComponent* FishCable;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable_GoalFish", meta = (AllowPrivateAccess = "true"))
+	class USkeletalMeshComponent* FishToCarry;
+
 #pragma region CameraComponents
 
 	/** Camera boom positioning the camera behind the character */
@@ -32,10 +38,6 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
-
-// 	/** Stationary camera on top of the player */
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-// 	class UCameraComponent* BirdEyeCamera;
 
 #pragma endregion CameraComponents
 

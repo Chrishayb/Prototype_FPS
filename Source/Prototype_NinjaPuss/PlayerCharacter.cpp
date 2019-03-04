@@ -7,6 +7,7 @@
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "CableComponent/Classes/CableComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -19,7 +20,7 @@
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
 
 	// Set the tomato that will show inside players hand
@@ -49,7 +50,7 @@ APlayerCharacter::APlayerCharacter()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-	
+
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
@@ -63,6 +64,13 @@ APlayerCharacter::APlayerCharacter()
 
 	AimDownSightFocusPoint = CreateDefaultSubobject<USceneComponent>(TEXT("AimDownSightFocusPoint"));
 	AimDownSightFocusPoint->SetupAttachment(GetMesh());
+
+	FishCable = CreateDefaultSubobject<UCableComponent>(TEXT("FishCable"));
+	FishCable->SetupAttachment(GetMesh());
+
+	FishToCarry = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FishToCarry"));
+	FishToCarry->SetupAttachment(FishCable);
+	//FishToCarry->AttachToComponent(FishCable, FAttachmentTransformRules::KeepRelativeTransform, )
 }
 
 // Called when the game starts or when spawned
