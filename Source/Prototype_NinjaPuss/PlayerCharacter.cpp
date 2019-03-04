@@ -183,6 +183,9 @@ void APlayerCharacter::MoveRight(float Value)
 
 void APlayerCharacter::CameraToggle()
 {
+	// Blueprint implement event
+	ReceiveCameraToggle();
+
 	// Do the flip flop
 	bIsBirdEyeCamera = !bIsBirdEyeCamera;
 	if (bIsBirdEyeCamera)
