@@ -90,15 +90,6 @@ void APlayerCharacter::BeginPlay()
 	bOpenToInteract = false;
 
 	CheckTomatoInHand();
-
-	TArray<FName> fishCableSocket = FishCable->GetAllSocketNames();
-	if (GEngine)
-	{
-		for (FName name : fishCableSocket)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Green, name.ToString());
-		}
-	}
 }
 
 // Called every frame
