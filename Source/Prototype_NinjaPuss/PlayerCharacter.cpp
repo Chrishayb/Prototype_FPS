@@ -70,9 +70,13 @@ APlayerCharacter::APlayerCharacter()
 	FishCable = CreateDefaultSubobject<UCableComponent>(TEXT("FishCable"));
 	FishCable->SetupAttachment(GetMesh());
 
+	FishCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("FishCollider"));
+	FishCollider->SetupAttachment(FishCable);
+	FishCollider->AttachToComponent(FishCable, FAttachmentTransformRules::KeepRelativeTransform, TEXT("CableEnd"));
+
 	FishToCarry = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FishToCarry"));
-	FishToCarry->SetupAttachment(FishCable);
-	FishToCarry->AttachToComponent(FishCable, FAttachmentTransformRules::KeepRelativeTransform, TEXT("CableEnd"));
+	FishToCarry->SetupAttachment(FishCollider);
+	//FishToCarry->AttachToComponent(FishCable, FAttachmentTransformRules::KeepRelativeTransform, TEXT("CableEnd"));
 }
 
 // Called when the game starts or when spawned
@@ -306,6 +310,13 @@ void APlayerCharacter::RestoreTomato(int _count)
 {
 	TomatoCurrentCount = FMath::Min(TomatoTotalCount, TomatoCurrentCount + _count);
 	CheckTomatoInHand();
+}
+
+void APlayerCharacter::GrabbingFish()
+{
+	// Set the visibility of the fish to visible
+	FishCable->SetVisibility(true);
+	FishToCarry->SetVisibility(true);
 }
 
 void APlayerCharacter::SetInteractionTarget(class AInteractActor* _interactTarget)

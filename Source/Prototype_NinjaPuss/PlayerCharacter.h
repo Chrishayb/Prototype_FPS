@@ -27,6 +27,9 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 	class UCableComponent* FishCable;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable_GoalFish", meta = (AllowPrivateAccess = "true"))
+	class UCapsuleComponent* FishCollider;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable_GoalFish", meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* FishToCarry;
 
 #pragma region CameraComponents
@@ -175,6 +178,9 @@ public:
 	/** Return the current count of kunai player is holding */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	int GetKunaiCount() { return TomatoCurrentCount; }
+
+	UFUNCTION(BlueprintCallable, Category = "Fish")
+	void GrabbingFish();
 
 	/** Set the target to interact for the player */
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
