@@ -93,12 +93,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Skill_Tomato")
 	float CameraZoomRatio;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill_Tomato")
+	bool bAbleToShootTomato;
+
 #pragma endregion Tomato
 
 #pragma region Interaction
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	class AInteractActor* InteractTarget;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	bool bAbleToInterate;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
 	bool bOpenToInteract;
@@ -146,12 +152,16 @@ protected:
 	void CheckTomatoInHand();
 
 	/** Called for aim down sight for shooting tomato */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	void AimDownSight();
 
 	/** Called for exite aim down sight */
-	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
 	void ExitAimDownSight();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Skill_Tomato", meta = (DisplayName = "OnAimDownSight"))
+	void ReceiveAimDownSight();
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Skill_Tomato", meta = (DisplayName = "OnExitAimDownSight"))
+	void ReceiveExitAimDownSight();
 
 	/** Called for shooting shuriken */
 	UFUNCTION(BlueprintCallable, Category = "Skill_Tomato")
