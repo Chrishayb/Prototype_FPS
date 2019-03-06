@@ -76,7 +76,6 @@ APlayerCharacter::APlayerCharacter()
 
 	FishToCarry = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FishToCarry"));
 	FishToCarry->SetupAttachment(FishCollider);
-	//FishToCarry->AttachToComponent(FishCable, FAttachmentTransformRules::KeepRelativeTransform, TEXT("CableEnd"));
 }
 
 // Called when the game starts or when spawned
