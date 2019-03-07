@@ -22,14 +22,8 @@ class PROTOTYPE_NINJAPUSS_API APlayerCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Skill_Tomato", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* TomatoInHandMesh;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable_GoalFish", meta = (AllowPrivateAccess = "true"))
-	class UCableComponent* FishCable;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable_GoalFish", meta = (AllowPrivateAccess = "true"))
-	class UCapsuleComponent* FishCollider;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Cable_GoalFish", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GoalFish", meta = (AllowPrivateAccess = "true"))
 	class USkeletalMeshComponent* FishToCarry;
 
 #pragma region CameraComponents

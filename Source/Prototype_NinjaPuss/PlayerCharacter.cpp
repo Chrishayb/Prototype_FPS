@@ -7,7 +7,6 @@
 #include "Components/InputComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "CableComponent/Classes/CableComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -17,7 +16,7 @@
 
 #include "InteractActor.h"
 
-#include "Engine.h"
+//#include "Engine.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -67,15 +66,8 @@ APlayerCharacter::APlayerCharacter()
 	AimDownSightFocusPoint = CreateDefaultSubobject<USceneComponent>(TEXT("AimDownSightFocusPoint"));
 	AimDownSightFocusPoint->SetupAttachment(GetMesh());
 
-	FishCable = CreateDefaultSubobject<UCableComponent>(TEXT("FishCable"));
-	FishCable->SetupAttachment(GetMesh());
-
-	FishCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("FishCollider"));
-	FishCollider->SetupAttachment(FishCable);
-	FishCollider->AttachToComponent(FishCable, FAttachmentTransformRules::KeepRelativeTransform, TEXT("CableEnd"));
-
 	FishToCarry = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FishToCarry"));
-	FishToCarry->SetupAttachment(FishCollider);
+	FishToCarry->SetupAttachment(GetMesh(), TEXT("FishBackSocket"));
 }
 
 // Called when the game starts or when spawned
@@ -336,7 +328,6 @@ void APlayerCharacter::RestoreTomato(int _count)
 void APlayerCharacter::GrabbingFish()
 {
 	// Set the visibility of the fish to visible
-	FishCable->SetVisibility(true);
 	FishToCarry->SetVisibility(true);
 }
 
