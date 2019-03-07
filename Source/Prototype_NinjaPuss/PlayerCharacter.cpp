@@ -91,6 +91,7 @@ void APlayerCharacter::BeginPlay()
 
 	// Default Interaction state
 	bOpenToInteract = false;
+	bAbleToShootTomato = true;
 
 	CheckTomatoInHand();
 }
@@ -129,6 +130,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	// Player other action (Interactions and Functionalities)
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APlayerCharacter::InteractAction);
 	PlayerInputComponent->BindAction("BirdViewToggle", IE_Pressed, this, &APlayerCharacter::CameraToggle);
+	PlayerInputComponent->BindAction("AimDownSight", IE_Pressed, this, &APlayerCharacter::AimDownSight);
+	PlayerInputComponent->BindAction("AimDownSight", IE_Released, this, &APlayerCharacter::ExitAimDownSight);
+	PlayerInputComponent->BindAction("Shoot", IE_Pressed, this, &APlayerCharacter::ShootTomato);
 }
 
 void APlayerCharacter::TurnAtRate(float Rate)
@@ -205,6 +209,7 @@ void APlayerCharacter::CameraToggle()
 	{
 		// Disable the movement
 		GetCharacterMovement()->SetMovementMode(MOVE_None);
+		bAbleToShootTomato = false;
 
 		APlayerController* playerController = UGameplayStatics::GetPlayerController(this, 0);
 		if (playerController)
@@ -223,6 +228,7 @@ void APlayerCharacter::CameraToggle()
 	{
 		// Re-enable the movement
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		bAbleToShootTomato = true;
 
 		APlayerController* playerController = UGameplayStatics::GetPlayerController(this, 0);
 		if (playerController)
@@ -234,6 +240,10 @@ void APlayerCharacter::CameraToggle()
 
 void APlayerCharacter::AimDownSight()
 {
+	// Abort when player cant shoot tomato
+	if (!bAbleToShootTomato)
+		return;
+
 	// Change the ADS state to true
 	AimDownSightState = true;
 
@@ -242,10 +252,17 @@ void APlayerCharacter::AimDownSight()
 
 	CameraBoom->AttachToComponent(AimDownSightFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	CameraBoom->TargetArmLength *= CameraZoomRatio;
+
+	// Call the blueprint implemented event
+	ReceiveAimDownSight();
 }
 
 void APlayerCharacter::ExitAimDownSight()
 {
+	// Abort when ads state is not even set
+	if (!AimDownSightState)
+		return;
+
 	// Change the ADS state to false
 	AimDownSightState = false;
 
@@ -254,6 +271,9 @@ void APlayerCharacter::ExitAimDownSight()
 
 	CameraBoom->AttachToComponent(FollowCameraFocusPoint, FAttachmentTransformRules::KeepRelativeTransform);
 	CameraBoom->TargetArmLength /= CameraZoomRatio;
+
+	// Call the blueprint implemented event
+	ReceiveExitAimDownSight();
 }
 
 void APlayerCharacter::ShootTomato()
@@ -263,6 +283,7 @@ void APlayerCharacter::ShootTomato()
 	// Check if there is enough tomato to shoot
 	if (TomatoObject 
 		&& AimDownSightState == true
+		&& bAbleToShootTomato == true
 		&& TomatoCurrentCount > 0)
 	{
 		// Set the parameter for spawning the shuriken
@@ -291,6 +312,7 @@ void APlayerCharacter::InteractAction()
 	if (InteractTarget)
 	{
 		InteractTarget->OnInteractionStart();
+		RemoveInteractionTarget(InteractTarget);
 	}
 
 	if (bOpenToInteract)
