@@ -209,6 +209,7 @@ void APlayerCharacter::CameraToggle()
 	{
 		// Disable the movement
 		GetCharacterMovement()->SetMovementMode(MOVE_None);
+		bAbleToShootTomato = false;
 
 		APlayerController* playerController = UGameplayStatics::GetPlayerController(this, 0);
 		if (playerController)
@@ -227,6 +228,7 @@ void APlayerCharacter::CameraToggle()
 	{
 		// Re-enable the movement
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		bAbleToShootTomato = true;
 
 		APlayerController* playerController = UGameplayStatics::GetPlayerController(this, 0);
 		if (playerController)
@@ -257,6 +259,10 @@ void APlayerCharacter::AimDownSight()
 
 void APlayerCharacter::ExitAimDownSight()
 {
+	// Abort when ads state is not even set
+	if (!AimDownSightState)
+		return;
+
 	// Change the ADS state to false
 	AimDownSightState = false;
 
@@ -306,6 +312,7 @@ void APlayerCharacter::InteractAction()
 	if (InteractTarget)
 	{
 		InteractTarget->OnInteractionStart();
+		RemoveInteractionTarget(InteractTarget);
 	}
 
 	if (bOpenToInteract)
